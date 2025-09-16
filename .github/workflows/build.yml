@@ -1,10 +1,7 @@
 name: Build APK
 
 on:
-  workflow_dispatch:   # lets you trigger manually from GitHub
-  push:
-    branches:
-      - master
+  workflow_dispatch:
 
 jobs:
   build:
@@ -12,29 +9,21 @@ jobs:
 
     steps:
       - name: Checkout source
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
-
-      - name: Install system dependencies
+      - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y python3-pip openjdk-17-jdk unzip git zip
+          sudo apt install -y python3-pip openjdk-17-jdk git zip unzip
           pip install --upgrade pip
+          pip install buildozer cython
 
-      - name: Install Buildozer
-        run: pip install buildozer cython
-
-      - name: Build APK
+      - name: Build with Buildozer
         run: |
-          buildozer init || true
           buildozer -v android debug
 
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
         with:
           name: app-apk
           path: bin/*.apk
