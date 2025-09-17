@@ -26,7 +26,7 @@ jobs:
           restore-keys: python-pip-
 
       # -----------------------------
-      # Install Python dependencies
+      # Install Python & system dependencies
       - name: Install Python dependencies
         run: |
           sudo apt update
@@ -53,19 +53,22 @@ jobs:
           wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline-tools.zip
           unzip cmdline-tools.zip
           rm cmdline-tools.zip
-          mv cmdline-tools latest    # THIS FIXES aidl not found
+          mv cmdline-tools latest
           yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
 
       # -----------------------------
-      # Set environment variables
+      # Set environment variables (fix AIDL not found)
       - name: Set environment variables
         run: |
-          echo "export ANDROID_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
-          echo "export PATH=$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH" >> $GITHUB_ENV
+          echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+          echo "$ANDROID_SDK_ROOT/platform-tools" >> $GITHUB_PATH
+          echo "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin" >> $GITHUB_PATH
+          echo "$ANDROID_SDK_ROOT/build-tools/33.0.2" >> $GITHUB_PATH
 
       # -----------------------------
-      # Build APK
+      # Build APK with Buildozer
       - name: Build APK with Buildozer
         run: |
           buildozer -v android debug
