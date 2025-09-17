@@ -41,7 +41,7 @@ jobs:
         id: android-sdk-cache
         with:
           path: ${{ env.ANDROID_SDK_ROOT }}
-          key: android-sdk-${{ runner.os }}-v1
+          key: android-sdk-${{ runner.os }}-v2
 
       # -----------------------------
       # Install Android SDK & Build Tools
@@ -58,14 +58,15 @@ jobs:
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager \
             "platform-tools" \
             "platforms;android-33" \
-            "build-tools;34.0.0"   # ✅ Matches buildozer.spec
+            "build-tools;34.0.0"   # ✅ installs aidl here
 
       # -----------------------------
       # Set environment variables
       - name: Set environment variables
         run: |
-          echo "export ANDROID_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
-          echo "export PATH=$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH" >> $GITHUB_ENV
+          echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+          echo "PATH=$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/build-tools/34.0.0:$PATH" >> $GITHUB_ENV
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
 
       # -----------------------------
       # Build APK
